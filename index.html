@@ -260,7 +260,7 @@
                 const amount = item.children[2].value;
                 const itemTotal = quantity * amount;
                 totalAmount += itemTotal;
-                return [itemName, quantity, `$${amount}`, `$${itemTotal.toFixed(2)}`];
+                return [itemName, quantity, `N$${amount}`, `N$${itemTotal.toFixed(2)}`];
             });
 
             doc.autoTable({
@@ -276,11 +276,11 @@
             if (includeTax) {
                 const taxAmount = totalAmount * (taxPercentage / 100);
                 totalAmount += taxAmount;
-                doc.text(`Tax (${taxPercentage}%): $${taxAmount.toFixed(2)}`, 200, yPosition, { align: 'right' });
+                doc.text(`Tax (${taxPercentage}%): N$${taxAmount.toFixed(2)}`, 200, yPosition, { align: 'right' });
                 yPosition += 10;
             }
 
-            doc.text(`Total Amount: $${totalAmount.toFixed(2)}`, 200, yPosition, { align: 'right' });
+            doc.text(`Total Amount: N$${totalAmount.toFixed(2)}`, 200, yPosition, { align: 'right' });
             doc.text('Thank you for your business!', 10, yPosition + 20);
 
             doc.save('invoice.pdf');
