@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purpose Technology Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            background-image: url('flat.jpg'); /* Replace with your image URL */
+            background-size: cover;
+            background-position: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            color: #555;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .item input {
+            width: 30%;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: box-shadow 0.3s;
+        }
+        button:hover {
+            background: #555;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        .details {
+            display: flex;
+            justify-content: space-between;
+        }
+        .details div {
+            width: 45%;
+        }
+        .details div.right {
+            text-align: right;
+            margin-left: auto;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            font-size: 14px;
+            transition: transform 0.3s;
+        }
+        .footer.shrink {
+            transform: translateY(100%);
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            .item input {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            .details {
+                flex-direction: column;
+            }
+            .details div {
+                width: 100%;
+                text-align: left;
+            }
+            .details div.right {
+                text-align: left;
+                margin-left: 0;
+            }
+        }
+        .floating-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            padding: 20px;
+            background: #333;
+            color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        .floating-message button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Invoice Generator</h2>
+        <label for="companyLogo">Company Logo (URL)</label>
+        <input type="text" id="companyLogo" placeholder="Enter company logo URL">
+        <div class="details">
+            <div>
+                <label for="companyName">Company Name</label>
+                <input type="text" id="companyName" placeholder="Enter company name">
+                <label for="companyAddress">Company Address</label>
+                <textarea id="companyAddress" rows="4" placeholder="Enter company address"></textarea>
+            </div>
+            <div class="right">
+                <label for="clientName">Client Name</label>
+                <input type="text" id="clientName" placeholder="Enter client name">
+                <label for="clientAddress">Client Address</label>
+                <textarea id="clientAddress" rows="4" placeholder="Enter client address"></textarea>
+            </div>
+        </div>
+        <label for="invoiceDetails">Invoice Details</label>
+        <textarea id="invoiceDetails" rows="4" placeholder="Enter invoice details"></textarea>
+        <div id="items">
+            <div class="item">
+                <input type="text" placeholder="Item Name">
+                <input type="number" placeholder="Quantity">
+                <input type="number" placeholder="Amount">
+                <button type="button" onclick="removeItem(this)">Remove</button>
+            </div>
+        </div>
+        <button type="button" onclick="addItem()">Add Item</button>
+        <label>
+            <input type="checkbox" id="includeTax"> Include Tax
+        </label>
+        <input type="number" id="taxPercentage" placeholder="Enter tax percentage" style="display:none; width: 100%; margin-bottom: 20px;">
+        <button onclick="generatePDF()">Generate Invoice</button>
+    </div>
+    <div class="footer">
+        Purpose Technology: +264 81-785-4573 | All rights reserved
+    </div>
+
+    <div class="floating-message" id="floatingMessage">
+        <button onclick="closeMessage()">×</button>
+        <h3>Welcome to Purpose Technology</h3>
+        <p>At Purpose Technology, we specialize in providing comprehensive system design solutions and professional website development services for businesses. Contact us today to discuss your project needs.
+
+            Phone: +234 817 854 573. Enjoy your stay!</p>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <script>
+        document.getElementById('includeTax').addEventListener('change', function() {
+            document.getElementById('taxPercentage').style.display = this.checked ? 'block' : 'none';
+        });
+
+        function addItem() {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'item';
+            itemDiv.innerHTML = `
+                <input type="text" placeholder="Item Name">
+                <input type="number" placeholder="Quantity">
+                <input type="number" placeholder="Amount">
+                <button type="button" onclick="removeItem(this)">Remove</button>
+            `;
+            document.getElementById('items').appendChild(itemDiv);
+        }
+
+        function removeItem(button) {
+            button.parentElement.remove();
+        }
+
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            const companyLogo = document.getElementById('companyLogo').value;
+            const companyName = document.getElementById('companyName').value;
+            const companyAddress = document.getElementById('companyAddress').value;
+            const clientName = document.getElementById('clientName').value;
+            const clientAddress = document.getElementById('clientAddress').value;
+            const invoiceDetails = document.getElementById('invoiceDetails').value;
+            const items = document.querySelectorAll('#items .item');
+            const includeTax = document.getElementById('includeTax').checked;
+            const taxPercentage = parseFloat(document.getElementById('taxPercentage').value) || 0;
+            let totalAmount = 0;
+
+            doc.setFontSize(20);
+            doc.text("Invoice", 10, 10);
+
+            if (companyLogo) {
+                const img = new Image();
+                img.src = companyLogo;
+                doc.addImage(img, 'PNG', 150, 5, 50, 20);
+            }
+
+            doc.setFontSize(12);
+            doc.text(`Company Name: ${companyName}`, 10, 30);
+            doc.text(`Company Address:`, 10, 40);
+            doc.text(companyAddress, 10, 45);
+
+            doc.text(`Client Name: ${clientName}`, 200, 30, { align: 'right' });
+            doc.text(`Client Address:`, 200, 40, { align: 'right' });
+            doc.text(clientAddress, 200, 45, { align: 'right' });
+
+            doc.text("Invoice Details:", 10, 70);
+            doc.text(invoiceDetails, 10, 75);
+
+            let yPosition = 95;
+
+            const tableData = Array.from(items).map(item => {
+                const itemName = item.children[0].value;
+                const quantity = item.children[1].value;
+                const amount = item.children[2].value;
+                const itemTotal = quantity * amount;
+                totalAmount += itemTotal;
+                return [itemName, quantity, `$${amount}`, `$${itemTotal.toFixed(2)}`];
+            });
+
+            doc.autoTable({
+                startY: yPosition,
+                head: [['Item Name', 'Quantity', 'Amount', 'Total']],
+                body: tableData,
+                theme: 'grid',
+                margin: { top: 10 }
+            });
+
+            yPosition = doc.autoTable.previous.finalY + 10;
+
+            if (includeTax) {
+                const taxAmount = totalAmount * (taxPercentage / 100);
+                totalAmount += taxAmount;
+                doc.text(`Tax (${taxPercentage}%): $${taxAmount.toFixed(2)}`, 200, yPosition, { align: 'right' });
+                yPosition += 10;
+            }
+
+            doc.text(`Total Amount: $${totalAmount.toFixed(2)}`, 200, yPosition, { align: 'right' });
+            doc.text('Thank you for your business!', 10, yPosition + 20);
+
+            doc.save('invoice.pdf');
+        }
+
+        function closeMessage() {
+            document.getElementById('floatingMessage').style.display = 'none';
+        }
+
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', function() {
+            const footer = document.querySelector('.footer');
+            let st = window.pageYOffset || document.documentElement.scrollTop;
+            if (st > lastScrollTop) {
+                // Scroll down
+                footer.classList.add('shrink');
+            } else {
+                // Scroll up
+                footer.classList.remove('shrink');
+            }
+            lastScrollTop = st <= 0 ? 0 : st; // For Mobile or negative scrolling
+        });
+    </script>
+</body>
+</html>
