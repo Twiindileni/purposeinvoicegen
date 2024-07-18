@@ -29,10 +29,11 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-direction: column;
             height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
-            background: linear-gradient(to bottom, #0099ff, #011a63);
+            background: linear-gradient(to bottom, #0099ff, #0033cc);
             overflow: hidden;
         }
 
@@ -57,6 +58,11 @@
             opacity: 1;
         }
 
+        .logo {
+            width: 150px;
+            margin-bottom: 20px;
+        }
+
         h1 {
             font-size: 3em;
             margin: 0;
@@ -65,7 +71,13 @@
         h2 {
             font-size: 2em;
             margin: 0;
-            text-shadow: 0 0 10px #020202;
+            text-shadow: 0 0 10px #fff;
+        }
+
+        p {
+            font-size: 1.2em;
+            margin: 20px;
+            color: white;
         }
 
         .button {
@@ -83,16 +95,51 @@
             text-decoration: none;
             text-align: center;
         }
+
+        .footer {
+            position: absolute;
+            bottom: 10px;
+            font-size: 1em;
+            font-style: italic;
+            color: white;
+        }
+
+        .call-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #072f4a;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 30px;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
     <div class="loader" id="loader"></div>
     <div class="container" id="content">
+        <img src="purpose png.png" alt="Logo" class="logo">
         <h1>Welcome</h1>
-        <h2>Purpose Technology</h2>
+        <h2></h2>
         <a href="invoice.html" class="button">Invoice</a>
         <a href="quotation.html" class="button">Quotation</a>
+        <p>This software allows you to generate an invoice or quotation for your customers with one click.</p>
     </div>
+    <div class="footer">
+        Purpose Technology
+    </div>
+    <a href="0817854573" class="call-icon">
+        <i class="fas fa-phone"></i>
+    </a>
 
     <script>
         window.addEventListener('load', () => {
