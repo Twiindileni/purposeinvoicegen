@@ -3,150 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Purpose Technology</title>
+    <title>Invoice Maker</title>
     <style>
-        @keyframes fadeInUp {
-            0% {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes loader {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
         body {
+            margin: 0;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
             height: 100vh;
-            margin: 0;
+            background: linear-gradient(135deg, #0f4c75, #3282b8);
             font-family: Arial, sans-serif;
-            background: linear-gradient(to bottom, #0099ff, #0033cc);
-            overflow: hidden;
-        }
-
-        .loader {
-            border: 16px solid #f3f3f3;
-            border-top: 16px solid #3498db;
-            border-radius: 50%;
-            width: 120px;
-            height: 120px;
-            animation: loader 2s linear infinite;
-            position: absolute;
-        }
-
-        .container {
             text-align: center;
             color: white;
-            animation: fadeInUp 2s ease-in-out;
-            opacity: 0;
         }
 
-        .container.show {
-            opacity: 1;
+        .welcome-screen {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 3s ease-in-out;
+        }
+
+        .logo-container {
+            background-color: #3282b8;
+            padding: 50px 100px;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            animation: bounceIn 2s ease-in-out;
         }
 
         .logo {
-            width: 150px;
-            margin-bottom: 20px;
-        }
-
-        h1 {
+            margin: 0;
             font-size: 3em;
-            margin: 0;
-        }
-
-        h2 {
-            font-size: 2em;
-            margin: 0;
-            text-shadow: 0 0 10px #fff;
-        }
-
-        p {
-            font-size: 1.2em;
-            margin: 20px;
-            color: white;
-        }
-
-        .button {
-            display: block;
-            width: 200px;
-            padding: 15px;
-            margin: 20px auto;
-            border: none;
-            border-radius: 50px;
-            background-color: white;
-            color: black;
-            font-size: 1.5em;
             font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            text-align: center;
+            animation: zoomIn 2s ease-in-out;
         }
 
         .footer {
-            position: absolute;
-            bottom: 10px;
-            font-size: 1em;
-            font-style: italic;
-            color: white;
-        }
-
-        .call-icon {
+            width: 100%;
             position: fixed;
             bottom: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            background-color: #072f4a;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-size: 30px;
-            text-decoration: none;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
+            left: 0;
+            font-size: 1.2em;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            60% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        /* Media Queries */
+        @media (max-width: 768px) {
+            .logo-container {
+                padding: 30px 50px;
+            }
+
+            .logo {
+                font-size: 2em;
+            }
+
+            .footer {
+                font-size: 1em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo-container {
+                padding: 20px 30px;
+            }
+
+            .logo {
+                font-size: 1.5em;
+            }
+
+            .footer {
+                font-size: 0.8em;
+                bottom: 10px;
+            }
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
-    <div class="loader" id="loader"></div>
-    <div class="container" id="content">
-        <img src="purpose png.png" alt="Logo" class="logo">
-        <h1>Welcome</h1>
-        <h2></h2>
-        <a href="invoice.html" class="button">Invoice</a>
-        <a href="quotation.html" class="button">Quotation</a>
-        <p>This software allows you to generate an invoice or quotation for your customers with one click.</p>
+    <div class="welcome-screen">
+        <div class="logo-container">
+            <h1 class="logo">INVOICE MAKER</h1>
+        </div>
     </div>
-    <div class="footer">
-        Purpose Technology
-    </div>
-    <a href="0817854573" class="call-icon">
-        <i class="fas fa-phone"></i>
-    </a>
+    <p class="footer">By Purpose Technology, Namibian Proudly</p>
 
     <script>
-        window.addEventListener('load', () => {
-            const loader = document.getElementById('loader');
-            const content = document.getElementById('content');
-            loader.style.display = 'none';
-            content.classList.add('show');
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                window.location.href = 'welcome.html';
+            }, 5020); // Redirect to home page after 5 seconds
         });
     </script>
 </body>
