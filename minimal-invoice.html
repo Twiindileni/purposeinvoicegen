@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimal Invoice Template</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --text-color: #333333;
+            --border-color: #e5e7eb;
+            --background-color: #ffffff;
+            --accent-color: #6b7280;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.5;
+            color: var(--text-color);
+            background: #f9fafb;
+            padding: 40px 20px;
+        }
+
+        .invoice-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--background-color);
+            padding: 60px;
+        }
+
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 60px;
+        }
+
+        .company-info h1 {
+            font-size: 24px;
+            font-weight: 400;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        .invoice-title {
+            font-size: 32px;
+            font-weight: 300;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .invoice-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 60px;
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 40px 0;
+        }
+
+        .items-table th {
+            font-weight: 500;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border-color);
+            text-align: left;
+        }
+
+        .items-table td {
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .items-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .totals {
+            margin-left: auto;
+            width: 300px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            font-size: 14px;
+        }
+
+        .total-row.grand-total {
+            font-size: 18px;
+            font-weight: 500;
+            border-top: 1px solid var(--border-color);
+            margin-top: 10px;
+            padding-top: 15px;
+        }
+
+        .notes {
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer {
+            margin-top: 60px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--accent-color);
+        }
+
+        [contenteditable="true"] {
+            padding: 2px 4px;
+            border-radius: 2px;
+            transition: background-color 0.2s;
+        }
+
+        [contenteditable="true"]:hover {
+            background: rgba(107, 114, 128, 0.05);
+        }
+
+        [contenteditable="true"]:focus {
+            outline: none;
+            background: rgba(107, 114, 128, 0.05);
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .invoice-container {
+                padding: 40px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .invoice-container {
+                padding: 30px;
+            }
+
+            .invoice-header {
+                flex-direction: column;
+                gap: 20px;
+                margin-bottom: 40px;
+            }
+
+            .invoice-details {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .totals {
+                width: 100%;
+            }
+        }
+
+        /* Loading Screen Styles */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #333333;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .loading-content {
+            text-align: center;
+            color: white;
+        }
+
+        .loading-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 32px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .loading-subtitle {
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 300;
+            letter-spacing: 1px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s ease forwards 0.3s;
+        }
+
+        .loading-spinner {
+            margin: 40px 0;
+            width: 50px;
+            height: 50px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-left-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-progress {
+            width: 180px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 1px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: white;
+            border-radius: 1px;
+            transition: width 0.5s ease;
+            animation: progress 9.5s linear forwards;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes progress {
+            to { width: 100%; }
+        }
+
+        /* Hide main content initially */
+        .main-content {
+            opacity: 0;
+            transition: opacity 0.5s ease-in;
+        }
+
+        .main-content.visible {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen">
+        <div class="loading-content">
+            <h1 class="loading-title">MINIMAL INVOICE</h1>
+            <p class="loading-subtitle">Preparing your clean and simple template...</p>
+            <div class="loading-spinner"></div>
+            <div class="loading-progress">
+                <div class="progress-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="invoice-container">
+            <div class="invoice-header">
+                <div class="company-info">
+                    <h1 contenteditable="true">Your Company Name</h1>
+                    <p contenteditable="true">123 Business Street</p>
+                    <p contenteditable="true">City, State 12345</p>
+                    <p contenteditable="true">contact@company.com</p>
+                </div>
+                <div class="invoice-title">Invoice</div>
+            </div>
+
+            <div class="invoice-details">
+                <div class="client-info">
+                    <div class="section-title">Bill To</div>
+                    <p><strong>Client:</strong> <span contenteditable="true">John Doe</span></p>
+                    <p><strong>Company:</strong> <span contenteditable="true">Client Company Inc.</span></p>
+                    <p><strong>Address:</strong> <span contenteditable="true">456 Client Street</span></p>
+                    <p><strong>Email:</strong> <span contenteditable="true">john@clientcompany.com</span></p>
+                </div>
+                <div class="payment-info">
+                    <div class="section-title">Invoice Details</div>
+                    <p><strong>Invoice #:</strong> <span contenteditable="true">INV-2024-003</span></p>
+                    <p><strong>Date:</strong> <span id="invoice-date"></span></p>
+                    <p><strong>Due Date:</strong> <span id="due-date"></span></p>
+                    <p><strong>Terms:</strong> <span contenteditable="true">Net 30</span></p>
+                </div>
+            </div>
+
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Quantity</th>
+                        <th>Rate</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="item-list">
+                    <tr>
+                        <td contenteditable="true">Consulting Services</td>
+                        <td contenteditable="true">10</td>
+                        <td contenteditable="true">N$200.00</td>
+                        <td>N$2,000.00</td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">Project Management</td>
+                        <td contenteditable="true">15</td>
+                        <td contenteditable="true">N$150.00</td>
+                        <td>N$2,250.00</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="totals">
+                <div class="total-row">
+                    <span>Subtotal:</span>
+                    <span id="subtotal">N$4,250.00</span>
+                </div>
+                <div class="total-row">
+                    <span>Tax (10%):</span>
+                    <span id="tax">N$425.00</span>
+                </div>
+                <div class="total-row grand-total">
+                    <span>Total:</span>
+                    <span id="total">N$4,675.00</span>
+                </div>
+            </div>
+
+            <div class="notes">
+                <div class="section-title">Notes</div>
+                <p contenteditable="true">Thank you for your business. Please make payment within 30 days.</p>
+            </div>
+
+            <div class="footer">
+                <p>This is a computer-generated document. No signature is required.</p>
+            </div>
+        </div>
+
+        <div class="action-buttons" style="margin-top: 40px; text-align: right;">
+            <button onclick="generatePDF()" style="padding: 12px 24px; background: var(--accent-color); color: white; border: none; border-radius: 4px; cursor: pointer; font-family: 'Inter', sans-serif;">Generate PDF</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <script>
+        // Set current date and due date
+        const today = new Date();
+        const dueDate = new Date();
+        dueDate.setDate(today.getDate() + 30);
+
+        document.getElementById('invoice-date').textContent = today.toLocaleDateString();
+        document.getElementById('due-date').textContent = dueDate.toLocaleDateString();
+
+        // Function to calculate totals
+        function calculateTotals() {
+            const rows = document.querySelectorAll('#item-list tr');
+            let subtotal = 0;
+
+            rows.forEach(row => {
+                const quantity = parseFloat(row.children[1].textContent) || 0;
+                const rate = parseFloat(row.children[2].textContent.replace('N$', '')) || 0;
+                const total = quantity * rate;
+                row.children[3].textContent = 'N$' + total.toFixed(2);
+                subtotal += total;
+            });
+
+            const tax = subtotal * 0.1;
+            const total = subtotal + tax;
+
+            document.getElementById('subtotal').textContent = 'N$' + subtotal.toFixed(2);
+            document.getElementById('tax').textContent = 'N$' + tax.toFixed(2);
+            document.getElementById('total').textContent = 'N$' + total.toFixed(2);
+        }
+
+        // Add event listeners for contenteditable cells
+        document.querySelectorAll('#item-list td[contenteditable="true"]').forEach(cell => {
+            cell.addEventListener('input', calculateTotals);
+        });
+
+        // Function to generate PDF
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Add company info
+            doc.setFontSize(20);
+            doc.setTextColor(51, 51, 51);
+            doc.text(document.querySelector('.company-info h1').textContent, 15, 20);
+            
+            const companyInfo = Array.from(document.querySelectorAll('.company-info p')).map(p => p.textContent);
+            doc.setFontSize(10);
+            companyInfo.forEach((line, index) => {
+                doc.text(line, 15, 30 + (index * 5));
+            });
+
+            // Add invoice title
+            doc.setFontSize(32);
+            doc.setTextColor(107, 114, 128);
+            doc.text('INVOICE', 150, 20, { align: 'right' });
+
+            // Add invoice details
+            doc.setFontSize(10);
+            doc.setTextColor(51, 51, 51);
+            const invoiceDetails = document.querySelector('.payment-info').textContent.split('\n').filter(line => line.trim());
+            invoiceDetails.forEach((line, index) => {
+                doc.text(line, 150, 35 + (index * 5), { align: 'right' });
+            });
+
+            // Add client info
+            doc.setFontSize(11);
+            doc.text('Bill To:', 15, 70);
+            const clientInfo = document.querySelector('.client-info').textContent.split('\n').filter(line => line.trim()).slice(1);
+            doc.setFontSize(10);
+            clientInfo.forEach((line, index) => {
+                doc.text(line, 15, 80 + (index * 5));
+            });
+
+            // Add items table
+            const items = Array.from(document.querySelectorAll('#item-list tr')).map(row => [
+                row.children[0].textContent,
+                row.children[1].textContent,
+                row.children[2].textContent,
+                row.children[3].textContent
+            ]);
+
+            doc.autoTable({
+                startY: 110,
+                head: [['Description', 'Quantity', 'Rate', 'Amount']],
+                body: items,
+                theme: 'plain',
+                headStyles: { 
+                    fillColor: false, 
+                    textColor: [107, 114, 128],
+                    fontSize: 10,
+                    fontStyle: 'bold'
+                },
+                styles: { 
+                    font: 'helvetica',
+                    fontSize: 10,
+                    textColor: [51, 51, 51],
+                    cellPadding: 5
+                }
+            });
+
+            // Add totals
+            const finalY = doc.lastAutoTable.finalY + 10;
+            doc.text(`Subtotal: ${document.getElementById('subtotal').textContent}`, 150, finalY, { align: 'right' });
+            doc.text(`Tax: ${document.getElementById('tax').textContent}`, 150, finalY + 7, { align: 'right' });
+            doc.setFontSize(11);
+            doc.text(`Total: ${document.getElementById('total').textContent}`, 150, finalY + 14, { align: 'right' });
+
+            // Add notes
+            const notes = document.querySelector('.notes p').textContent;
+            if (notes) {
+                doc.setFontSize(11);
+                doc.text('Notes:', 15, finalY + 30);
+                doc.setFontSize(10);
+                doc.text(notes, 15, finalY + 37);
+            }
+
+            // Save the PDF
+            doc.save('minimal-invoice.pdf');
+        }
+
+        // Initialize calculations
+        calculateTotals();
+
+        // Loading screen handler
+        window.addEventListener('load', function() {
+            const loadingScreen = document.querySelector('.loading-screen');
+            const mainContent = document.querySelector('.main-content');
+            
+            // Show loading screen for 10 seconds
+            setTimeout(() => {
+                loadingScreen.style.opacity = '0';
+                mainContent.classList.add('visible');
+                
+                // Remove loading screen after fade out
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 500);
+            }, 10000);
+        });
+    </script>
+</body>
+</html> 

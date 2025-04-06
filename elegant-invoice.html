@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elegant Invoice Template</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #c9b037;
+            --text-color: #2c3e50;
+            --border-color: #e2e8f0;
+            --background-color: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background: #f8f9fa;
+            padding: 40px 20px;
+        }
+
+        .invoice-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--background-color);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .invoice-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, #c9b037, #ffd700);
+        }
+
+        .invoice-header {
+            padding: 60px 40px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .company-info h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .invoice-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 64px;
+            font-weight: 400;
+            color: var(--primary-color);
+            opacity: 0.1;
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            transform: rotate(-10deg);
+        }
+
+        .invoice-body {
+            padding: 40px;
+        }
+
+        .invoice-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .items-table th {
+            font-family: 'Playfair Display', serif;
+            background: var(--primary-color);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .items-table td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .items-table tr:hover {
+            background: rgba(201, 176, 55, 0.05);
+        }
+
+        .totals {
+            margin-left: auto;
+            width: 350px;
+            margin-top: 30px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 1px solid var(--border-color);
+            margin-bottom: -1px;
+        }
+
+        .total-row.grand-total {
+            background: var(--primary-color);
+            color: white;
+            font-weight: 500;
+            font-size: 18px;
+        }
+
+        .notes {
+            margin-top: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 1px solid var(--border-color);
+        }
+
+        .footer {
+            padding: 30px 40px;
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-color);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer::before {
+            content: '✦';
+            display: block;
+            color: var(--accent-color);
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        [contenteditable="true"] {
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        [contenteditable="true"]:hover {
+            background: rgba(201, 176, 55, 0.1);
+        }
+
+        [contenteditable="true"]:focus {
+            outline: none;
+            background: rgba(201, 176, 55, 0.1);
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .invoice-container {
+                box-shadow: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .invoice-header {
+                padding: 40px 20px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .invoice-title {
+                position: static;
+                transform: none;
+                text-align: left;
+                font-size: 36px;
+                opacity: 1;
+            }
+
+            .invoice-body {
+                padding: 20px;
+            }
+
+            .invoice-details {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .totals {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <div class="invoice-header">
+            <div class="header-content">
+                <div class="company-info">
+                    <h1 contenteditable="true">Luxe Studio</h1>
+                    <p contenteditable="true">123 Elegance Avenue</p>
+                    <p contenteditable="true">Luxury District, ST 12345</p>
+                    <p contenteditable="true">Tel: (555) 123-4567</p>
+                    <p contenteditable="true">Email: billing@luxestudio.com</p>
+                </div>
+                <div class="invoice-title">Invoice</div>
+            </div>
+        </div>
+
+        <div class="invoice-body">
+            <div class="invoice-details">
+                <div class="client-info">
+                    <div class="section-title">Bill To</div>
+                    <p><strong>Client:</strong> <span contenteditable="true">Prestige Ventures LLC</span></p>
+                    <p><strong>Contact Person:</strong> <span contenteditable="true">Alexander Wright</span></p>
+                    <p><strong>Address:</strong> <span contenteditable="true">456 Luxury Lane</span></p>
+                    <p><strong>Email:</strong> <span contenteditable="true">alexander@prestigeventures.com</span></p>
+                </div>
+                <div class="payment-info">
+                    <div class="section-title">Invoice Details</div>
+                    <p><strong>Invoice #:</strong> <span contenteditable="true">INV-2024-001</span></p>
+                    <p><strong>Date:</strong> <span id="invoice-date"></span></p>
+                    <p><strong>Due Date:</strong> <span id="due-date"></span></p>
+                    <p><strong>Payment Terms:</strong> <span contenteditable="true">Due upon receipt</span></p>
+                </div>
+            </div>
+
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th>Service Description</th>
+                        <th>Hours</th>
+                        <th>Rate</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="item-list">
+                    <tr>
+                        <td contenteditable="true">Premium Design Services</td>
+                        <td contenteditable="true">25</td>
+                        <td contenteditable="true">$350.00</td>
+                        <td>$8,750.00</td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">Luxury Brand Consultation</td>
+                        <td contenteditable="true">15</td>
+                        <td contenteditable="true">$500.00</td>
+                        <td>$7,500.00</td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">Elite Marketing Strategy</td>
+                        <td contenteditable="true">20</td>
+                        <td contenteditable="true">$450.00</td>
+                        <td>$9,000.00</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="totals">
+                <div class="total-row">
+                    <span>Subtotal:</span>
+                    <span id="subtotal">$25,250.00</span>
+                </div>
+                <div class="total-row">
+                    <span>Tax (10%):</span>
+                    <span id="tax">$2,525.00</span>
+                </div>
+                <div class="total-row grand-total">
+                    <span>Total:</span>
+                    <span id="total">$27,775.00</span>
+                </div>
+            </div>
+
+            <div class="notes">
+                <div class="section-title">Terms & Notes</div>
+                <p contenteditable="true">1. All prices are in USD.
+                2. Payment is due upon receipt of invoice.
+                3. Bank transfer details will be provided separately.
+                4. Late payments are subject to a 5% monthly fee.</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Luxe Studio | Creating Exceptional Experiences | Est. 2010</p>
+        </div>
+    </div>
+
+    <script>
+        // Set current date and due date
+        const today = new Date();
+        const dueDate = new Date();
+        dueDate.setDate(today.getDate() + 15);
+
+        document.getElementById('invoice-date').textContent = today.toLocaleDateString();
+        document.getElementById('due-date').textContent = dueDate.toLocaleDateString();
+
+        // Function to calculate totals
+        function calculateTotals() {
+            const rows = document.querySelectorAll('#item-list tr');
+            let subtotal = 0;
+
+            rows.forEach(row => {
+                const hours = parseFloat(row.children[1].textContent) || 0;
+                const rate = parseFloat(row.children[2].textContent.replace('$', '')) || 0;
+                const total = hours * rate;
+                row.children[3].textContent = '$' + total.toFixed(2);
+                subtotal += total;
+            });
+
+            const tax = subtotal * 0.1;
+            const total = subtotal + tax;
+
+            document.getElementById('subtotal').textContent = '$' + subtotal.toFixed(2);
+            document.getElementById('tax').textContent = '$' + tax.toFixed(2);
+            document.getElementById('total').textContent = '$' + total.toFixed(2);
+        }
+
+        // Add event listeners for contenteditable cells
+        document.querySelectorAll('#item-list td[contenteditable="true"]').forEach(cell => {
+            cell.addEventListener('input', calculateTotals);
+        });
+
+        // Initialize calculations
+        calculateTotals();
+    </script>
+</body>
+</html> 

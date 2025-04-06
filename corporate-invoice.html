@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Invoice Template</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --text-color: #2c3e50;
+            --border-color: #e2e8f0;
+            --background-color: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background: #f8f9fa;
+            padding: 40px 20px;
+        }
+
+        .invoice-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--background-color);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .invoice-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 40px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .company-info h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .invoice-title {
+            font-size: 48px;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: right;
+        }
+
+        .invoice-body {
+            padding: 40px;
+        }
+
+        .invoice-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .items-table th {
+            background: var(--secondary-color);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .items-table td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .items-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .items-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .totals {
+            margin-left: auto;
+            width: 350px;
+            margin-top: 30px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 20px;
+            background: #f8f9fa;
+            border: 1px solid var(--border-color);
+            margin-bottom: -1px;
+        }
+
+        .total-row.grand-total {
+            background: var(--primary-color);
+            color: white;
+            font-weight: 500;
+            font-size: 18px;
+        }
+
+        .notes {
+            margin-top: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border: 1px solid var(--border-color);
+        }
+
+        .footer {
+            background: var(--primary-color);
+            color: white;
+            padding: 20px 40px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        [contenteditable="true"] {
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        [contenteditable="true"]:hover {
+            background: rgba(52, 152, 219, 0.1);
+        }
+
+        [contenteditable="true"]:focus {
+            outline: none;
+            background: rgba(52, 152, 219, 0.1);
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .invoice-container {
+                box-shadow: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .invoice-header {
+                padding: 30px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .invoice-title {
+                text-align: left;
+                font-size: 36px;
+            }
+
+            .invoice-body {
+                padding: 20px;
+            }
+
+            .invoice-details {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .totals {
+                width: 100%;
+            }
+        }
+
+        /* Loading Screen Styles */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #2c3e50;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .loading-content {
+            text-align: center;
+            color: white;
+        }
+
+        .loading-title {
+            font-size: 32px;
+            font-weight: 300;
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .loading-subtitle {
+            font-size: 16px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s ease forwards 0.3s;
+        }
+
+        .loading-spinner {
+            margin: 40px 0;
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-left-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-progress {
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: #3498db;
+            border-radius: 2px;
+            transition: width 0.5s ease;
+            animation: progress 9.5s linear forwards;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes progress {
+            to { width: 100%; }
+        }
+
+        /* Hide main content initially */
+        .main-content {
+            opacity: 0;
+            transition: opacity 0.5s ease-in;
+        }
+
+        .main-content.visible {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen">
+        <div class="loading-content">
+            <h1 class="loading-title">Corporate Invoice Generator</h1>
+            <p class="loading-subtitle">Preparing your professional invoice template...</p>
+            <div class="loading-spinner"></div>
+            <div class="loading-progress">
+                <div class="progress-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="invoice-container">
+            <div class="invoice-header">
+                <div class="header-content">
+                    <div class="company-info">
+                        <h1 contenteditable="true">Global Corporation Ltd.</h1>
+                        <p contenteditable="true">123 Corporate Plaza</p>
+                        <p contenteditable="true">Business District, ST 12345</p>
+                        <p contenteditable="true">Tel: (555) 987-6543</p>
+                        <p contenteditable="true">Email: billing@globalcorp.com</p>
+                    </div>
+                    <div class="invoice-title">Invoice</div>
+                </div>
+            </div>
+
+            <div class="invoice-body">
+                <div class="invoice-details">
+                    <div class="client-info">
+                        <div class="section-title">Bill To</div>
+                        <p><strong>Client:</strong> <span contenteditable="true">Enterprise Solutions Inc.</span></p>
+                        <p><strong>Contact Person:</strong> <span contenteditable="true">Sarah Johnson</span></p>
+                        <p><strong>Address:</strong> <span contenteditable="true">789 Business Avenue</span></p>
+                        <p><strong>Email:</strong> <span contenteditable="true">sarah@enterprise.com</span></p>
+                    </div>
+                    <div class="payment-info">
+                        <div class="section-title">Invoice Details</div>
+                        <p><strong>Invoice #:</strong> <span contenteditable="true">INV-2024-004</span></p>
+                        <p><strong>Date:</strong> <span id="invoice-date"></span></p>
+                        <p><strong>Due Date:</strong> <span id="due-date"></span></p>
+                        <p><strong>Payment Terms:</strong> <span contenteditable="true">Net 30</span></p>
+                    </div>
+                </div>
+
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th>Service Description</th>
+                            <th>Hours</th>
+                            <th>Rate</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="item-list">
+                        <tr>
+                            <td contenteditable="true">Strategic Consulting</td>
+                            <td contenteditable="true">40</td>
+                            <td contenteditable="true">N$250.00</td>
+                            <td>N$10,000.00</td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true">Implementation Services</td>
+                            <td contenteditable="true">80</td>
+                            <td contenteditable="true">N$200.00</td>
+                            <td>N$16,000.00</td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true">Project Management</td>
+                            <td contenteditable="true">30</td>
+                            <td contenteditable="true">N$175.00</td>
+                            <td>N$5,250.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="totals">
+                    <div class="total-row">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">N$31,250.00</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Tax (10%):</span>
+                        <span id="tax">N$3,125.00</span>
+                    </div>
+                    <div class="total-row grand-total">
+                        <span>Total:</span>
+                        <span id="total">N$34,375.00</span>
+                    </div>
+                </div>
+
+                <div class="notes">
+                    <div class="section-title">Terms & Notes</div>
+                    <p contenteditable="true">1. Payment is due within 30 days of invoice date.
+                    2. Please include invoice number on all payments.
+                    3. Make checks payable to Global Corporation Ltd.
+                    4. Wire transfer details available upon request.</p>
+                </div>
+            </div>
+
+            <div class="footer">
+                <p>Global Corporation Ltd. | Registered in Business State | Company No. 12345678</p>
+            </div>
+        </div>
+
+        <div class="action-buttons" style="margin-top: 30px; text-align: center;">
+            <button onclick="generatePDF()" style="padding: 12px 24px; background: var(--primary-color); color: white; border: none; border-radius: 4px; cursor: pointer; font-family: 'Roboto', sans-serif;">Generate PDF</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <script>
+        // Loading screen handler
+        window.addEventListener('load', function() {
+            const loadingScreen = document.querySelector('.loading-screen');
+            const mainContent = document.querySelector('.main-content');
+            
+            // Show loading screen for 10 seconds
+            setTimeout(() => {
+                loadingScreen.style.opacity = '0';
+                mainContent.classList.add('visible');
+                
+                // Remove loading screen after fade out
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 500);
+            }, 10000);
+        });
+
+        // Set current date and due date
+        const today = new Date();
+        const dueDate = new Date();
+        dueDate.setDate(today.getDate() + 30);
+
+        document.getElementById('invoice-date').textContent = today.toLocaleDateString();
+        document.getElementById('due-date').textContent = dueDate.toLocaleDateString();
+
+        // Function to calculate totals
+        function calculateTotals() {
+            const rows = document.querySelectorAll('#item-list tr');
+            let subtotal = 0;
+
+            rows.forEach(row => {
+                const hours = parseFloat(row.children[1].textContent) || 0;
+                const rate = parseFloat(row.children[2].textContent.replace('N$', '')) || 0;
+                const total = hours * rate;
+                row.children[3].textContent = 'N$' + total.toFixed(2);
+                subtotal += total;
+            });
+
+            const tax = subtotal * 0.1;
+            const total = subtotal + tax;
+
+            document.getElementById('subtotal').textContent = 'N$' + subtotal.toFixed(2);
+            document.getElementById('tax').textContent = 'N$' + tax.toFixed(2);
+            document.getElementById('total').textContent = 'N$' + total.toFixed(2);
+        }
+
+        // Add event listeners for contenteditable cells
+        document.querySelectorAll('#item-list td[contenteditable="true"]').forEach(cell => {
+            cell.addEventListener('input', calculateTotals);
+        });
+
+        // Function to generate PDF
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Add company info with white background for header
+            doc.setFillColor(44, 62, 80); // Primary color
+            doc.rect(0, 0, 220, 40, 'F');
+            
+            doc.setTextColor(255, 255, 255); // White text
+            doc.setFontSize(24);
+            doc.text(document.querySelector('.company-info h1').textContent, 15, 20);
+            
+            doc.setFontSize(10);
+            const companyInfo = Array.from(document.querySelectorAll('.company-info p')).map(p => p.textContent);
+            companyInfo.forEach((line, index) => {
+                doc.text(line, 15, 25 + (index * 5));
+            });
+
+            // Add invoice title
+            doc.setFontSize(32);
+            doc.text('INVOICE', 150, 25, { align: 'right' });
+
+            // Reset text color for rest of the document
+            doc.setTextColor(44, 62, 80);
+
+            // Add invoice details
+            doc.setFontSize(12);
+            const invoiceDetails = document.querySelector('.payment-info').textContent.split('\n').filter(line => line.trim());
+            invoiceDetails.forEach((line, index) => {
+                doc.text(line, 150, 55 + (index * 5), { align: 'right' });
+            });
+
+            // Add client info
+            doc.text('Bill To:', 15, 60);
+            const clientInfo = document.querySelector('.client-info').textContent.split('\n').filter(line => line.trim()).slice(1);
+            doc.setFontSize(10);
+            clientInfo.forEach((line, index) => {
+                doc.text(line, 15, 70 + (index * 5));
+            });
+
+            // Add items table
+            const items = Array.from(document.querySelectorAll('#item-list tr')).map(row => [
+                row.children[0].textContent,
+                row.children[1].textContent,
+                row.children[2].textContent,
+                row.children[3].textContent
+            ]);
+
+            doc.autoTable({
+                startY: 100,
+                head: [['Description', 'Hours', 'Rate', 'Amount']],
+                body: items,
+                theme: 'grid',
+                headStyles: { 
+                    fillColor: [52, 73, 94],
+                    textColor: 255,
+                    fontSize: 10,
+                    fontStyle: 'bold'
+                },
+                styles: { 
+                    textColor: [44, 62, 80],
+                    fontSize: 10
+                },
+                alternateRowStyles: {
+                    fillColor: [248, 249, 250]
+                }
+            });
+
+            // Add totals
+            const finalY = doc.lastAutoTable.finalY + 10;
+            doc.text(`Subtotal: ${document.getElementById('subtotal').textContent}`, 150, finalY, { align: 'right' });
+            doc.text(`Tax: ${document.getElementById('tax').textContent}`, 150, finalY + 7, { align: 'right' });
+            doc.setFontSize(12);
+            doc.setTextColor(44, 62, 80);
+            doc.text(`Total: ${document.getElementById('total').textContent}`, 150, finalY + 14, { align: 'right' });
+
+            // Add notes
+            const notes = document.querySelector('.notes p').textContent;
+            if (notes) {
+                doc.setFontSize(11);
+                doc.text('Terms & Notes:', 15, finalY + 30);
+                doc.setFontSize(10);
+                const noteLines = notes.split('\n');
+                noteLines.forEach((line, index) => {
+                    doc.text(line.trim(), 15, finalY + 37 + (index * 5));
+                });
+            }
+
+            // Add footer
+            doc.setFontSize(9);
+            doc.setTextColor(52, 73, 94);
+            doc.text(document.querySelector('.footer p').textContent, 105, 280, { align: 'center' });
+
+            // Save the PDF
+            doc.save('corporate-invoice.pdf');
+        }
+
+        // Initialize calculations
+        calculateTotals();
+    </script>
+</body>
+</html> 
